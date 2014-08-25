@@ -21,7 +21,6 @@ exports.register = function(commander) {
         .option('--verbose', 'output verbose help', Boolean, false);
     
     commander.action(function () {
-
             var args = Array.prototype.slice.call(arguments);
             var options = args.pop();
             var cmd = args.shift();
@@ -37,14 +36,22 @@ exports.register = function(commander) {
             }
 
             var dir = options.name;
-
+            var ak, sk;
+            if (fs.existsSync('.bcs')){
+                var key = JSON.parse(fs.readFileSync('.bcs').toString());
+                ak = key.ak;
+                sk = key.sk;
+            }
+            
             check_dir(dir);
 
             scaffold.mv(__dirname + path.sep + './template', dir);
 
             scaffold.prompt(dir, {
                 preset:{
-                    name: options.name
+                    name: options.name,
+                    ak:ak,
+                    sk:sk
                 }
             },function () {
                 fis.log.notice('done');
